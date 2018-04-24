@@ -21,14 +21,17 @@ def load_image(path):
     return image
 
 
-def feature_map_at_layer(model, image, layer, lr, iterations):
-    img = Variable(preprocess(image).unsqueeze(0).cuda(), requires_grad=True)
+def feature_map_at_layer(model, image, layer, lr, iterations, options):
+    if options.cuda:
+        img = Variable(preprocess(image).unsqueeze(0).cuda(), requires_grad=True)
+    else:
+        img = Variable(preprocess(image).unsqueeze(0), requires_grad=True)
     model.zero_grad()
-    module_list = list(model.modules())
-    for i in range(iterations):
+    module_list = list(model.features.modules())
+    for _ in range(iterations):
         out = img
         for j in range(layer):
-            out = module_list[j + 1](img)
+            out = module_list[j + 1](out)
         loss = out.norm()
         loss.backward()
         img.data = img.data + (lr * img.grad.data)
@@ -41,6 +44,8 @@ def feature_map_at_layer(model, image, layer, lr, iterations):
     return img
 
 
-def deprocess_image(image):
-    return image * torch.Tensor([0.229, 0.224, 0.225]).cuda() + torch.Tensor([0.485, 0.456, 0.406]).cuda()
-
+def deprocess_image(image, options):
+    if options.cuda:
+        return image * torch.Tensor([0.229, 0.224, 0.225]).cuda() + torch.Tensor([0.485, 0.456, 0.406]).cuda()
+    else:
+        return image * torch.Tensor([0.229, 0.224, 0.225]) + torch.Tensor([0.485, 0.456, 0.406])

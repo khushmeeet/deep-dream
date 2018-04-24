@@ -28,12 +28,16 @@ def deep_dream(model, image_path, layer, iters, lr, octave_scale, num_octaves):
 
 if __name__ == '__main__':
     options = args.parser.parse_args()
-    resnet = models.resnet152(pretrained=True)
-    deep_dream(resnet,
+    if options.cuda:
+        vgg16 = models.vgg16(pretrained=True).cuda()
+    else:
+        vgg16 = models.vgg16(pretrained=True)
+    img_result = deep_dream(vgg16,
         options.img,
         options.layer,
         options.iters,
         model_settings['lr'],
         model_settings['octave_scale'],
         model_settings['num_octaves'])
+    img_result.save('out.jpg')
             
