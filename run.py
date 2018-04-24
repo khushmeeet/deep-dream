@@ -21,7 +21,7 @@ def deep_dream(model, image_path, layer, iters, lr, octave_scale, num_octaves):
         size = (image.size[0], image.size[1])
         img = img.resize(size, Image.ANTIALIAS)
         image = ImageChops.blend(image, img, 0.6)
-    img_result = feature_map_at_layer(model, image, layer, lr, iters)
+    img_result = feature_map_at_layer(model, image, layer, lr, iters, options)
     img_result = img_result.resize(image.size)
     plt.imshow(img_result)
     return img_result

@@ -17,7 +17,7 @@ preprocess = transforms.Compose([
 
 
 def load_image(path):
-    image = PIL.Image.open('img_0.jpg')
+    image = PIL.Image.open('./images/img_0.jpg')
     return image
 
 
@@ -39,7 +39,7 @@ def feature_map_at_layer(model, image, layer, lr, iterations, options):
     img = img.data.squeeze()
     img.transpose_(0, 1)
     img.transpose_(1, 2)
-    img = np.clip(deprocess_image(img), 0, 1)
+    img = np.clip(deprocess_image(img, options), 0, 1)
     img = PIL.Image.fromarray(np.uint8(img * 255))
     return img
 
